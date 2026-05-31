@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eloi Merle — Today</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     EDIT YOUR TOURS HERE
+     ------------------------------------------------------------
+     Each weather "mood" has its own set of recommendations.
+     The board picks the right set automatically from the forecast.
+     Add, remove or rewrite freely. Keep 2–3 per mood for a clean look.
+     ============================================================ */
+  /* (Tour data lives in the <script> at the bottom — scroll down,
+     it's clearly marked and easy to edit.) */
+
+  :root{
+    --sage-deep:   #3f5343;
+    --sage:        #6b8268;
+    --sage-soft:   #93a890;
+    --sage-pale:   #c5d2c0;
+    --cream:       #f4f1e8;
+    --cream-warm:  #ece6d6;
+    --ink:         #2c352b;
+    --gold:        #b9985a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;width:100%;overflow:hidden;}
+  body{
+    background:
+      radial-gradient(ellipse at 20% 0%, #45594a 0%, transparent 55%),
+      radial-gradient(ellipse at 100% 100%, #364738 0%, transparent 50%),
+      linear-gradient(155deg, #3f5343 0%, #354736 100%);
+    color:var(--cream);
+    font-family:'Jost',sans-serif;
+    display:flex;
+    flex-direction:column;
+    /* TV overscan-safe padding */
+    padding: 3.2vh 3.6vw;
+    position:relative;
+  }
+  body::before{
+    /* subtle paper grain */
+    content:"";position:fixed;inset:0;pointer-events:none;opacity:.04;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  header{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    border-bottom:1px solid rgba(197,210,192,.25);
+    padding-bottom:1.6vh;flex-shrink:0;
+  }
+  .brand .name{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:500;font-size:3.4vw;line-height:1;letter-spacing:.02em;
+    color:var(--cream);
+  }
+  .brand .sub{
+    font-size:1vw;letter-spacing:.42em;text-transform:uppercase;
+    color:var(--sage-pale);margin-top:.7vh;font-weight:300;
+  }
+  .datebox{text-align:right;}
+  .datebox .day{
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:1.9vw;color:var(--gold);line-height:1;
+  }
+  .datebox .date{
+    font-size:1.2vw;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--sage-pale);margin-top:.6vh;font-weight:300;
+  }
+
+  main{
+    flex:1;display:grid;grid-template-columns:1fr 1.35fr;gap:3.5vw;
+    align-items:center;padding-top:1vh;
+  }
+
+  /* ---- Weather column ---- */
+  .weather{display:flex;flex-direction:column;align-items:center;text-align:center;}
+  .w-icon{font-size:9vw;line-height:1;filter:drop-shadow(0 6px 14px rgba(0,0,0,.3));}
+  .w-temp{
+    font-family:'Cormorant Garamond',serif;font-weight:500;
+    font-size:8.5vw;line-height:.9;margin-top:1vh;
+  }
+  .w-temp .deg{font-size:3.5vw;vertical-align:super;color:var(--sage-pale);}
+  .w-cond{
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:2.4vw;color:var(--cream-warm);margin-top:.5vh;
+  }
+  .w-meta{
+    display:flex;gap:2.4vw;margin-top:2.2vh;
+    font-size:1.15vw;letter-spacing:.12em;color:var(--sage-pale);font-weight:300;
+  }
+  .w-meta b{display:block;color:var(--cream);font-weight:400;font-size:1.5vw;letter-spacing:0;margin-top:.4vh;}
+
+  /* ---- Tours column ---- */
+  .tours-head{
+    font-size:1.1vw;letter-spacing:.4em;text-transform:uppercase;
+    color:var(--gold);font-weight:400;margin-bottom:.4vh;
+  }
+  .tours-sub{
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:1.7vw;color:var(--sage-pale);margin-bottom:2.4vh;
+  }
+  .tour{
+    display:flex;gap:1.6vw;align-items:baseline;
+    padding:1.9vh 0;border-top:1px solid rgba(197,210,192,.18);
+    opacity:0;transform:translateY(12px);
+    animation:rise .7s ease forwards;
+  }
+  .tour:last-child{border-bottom:1px solid rgba(197,210,192,.18);}
+  .tour:nth-child(2){animation-delay:.15s;}
+  .tour:nth-child(3){animation-delay:.3s;}
+  .tour:nth-child(4){animation-delay:.45s;}
+  @keyframes rise{to{opacity:1;transform:translateY(0);}}
+  .tour .num{
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:2.2vw;color:var(--gold);min-width:2vw;
+  }
+  .tour .body .t-title{
+    font-family:'Cormorant Garamond',serif;font-weight:500;
+    font-size:2.4vw;line-height:1.05;color:var(--cream);
+  }
+  .tour .body .t-desc{
+    font-size:1.25vw;font-weight:300;line-height:1.4;
+    color:var(--sage-pale);margin-top:.6vh;max-width:34vw;
+  }
+
+  footer{
+    flex-shrink:0;display:flex;justify-content:space-between;align-items:center;
+    border-top:1px solid rgba(197,210,192,.25);
+    padding-top:1.4vh;margin-top:1vh;
+    font-size:.95vw;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--sage-soft);font-weight:300;
+  }
+  footer .clock{color:var(--cream);letter-spacing:.1em;}
+  .err{color:#e8c39a;font-style:italic;font-family:'Cormorant Garamond',serif;}
+</style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="name">Eloi Merle</div>
+      <div class="sub">Minervois &middot; Olonzac</div>
+    </div>
+    <div class="datebox">
+      <div class="day" id="dayName">—</div>
+      <div class="date" id="dateFull">—</div>
+    </div>
+  </header>
+
+  <main>
+    <section class="weather">
+      <div class="w-icon" id="wIcon">·</div>
+      <div class="w-temp"><span id="wTemp">—</span><span class="deg">°</span></div>
+      <div class="w-cond" id="wCond">Loading…</div>
+      <div class="w-meta">
+        <div>High<b id="wHigh">—°</b></div>
+        <div>Low<b id="wLow">—°</b></div>
+        <div>Rain<b id="wRain">—%</b></div>
+      </div>
+    </section>
+
+    <section class="tours">
+      <div class="tours-head" id="tHead">Suggested for today</div>
+      <div class="tours-sub" id="tSub"></div>
+      <div id="tourList"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div>Ask us &mdash; we love planning your day</div>
+    <div class="clock" id="clock">—</div>
+  </footer>
+
+<script>
+/* ============================================================
+   1.  YOUR TOURS  —  EDIT THIS BLOCK
+   ------------------------------------------------------------
+   Five "moods". The board chooses one based on the forecast:
+     sunny    – warm & dry
+     cloudy   – mild, overcast, dry
+     hot       – very hot (heat-of-day caution)
+     rain      – wet / high rain chance
+     cold      – cool day
+   Each tour: { title, desc }
+   ============================================================ */
+const TOURS = {
+  sunny: {
+    note: "A bright day for the open road and the vines",
+    items: [
+      { title: "Canal du Midi by bike", desc: "Shaded towpath from Homps — gentle, flat, and made for a picnic. Bikes arranged on request." },
+      { title: "Minerve & the gorges", desc: "The cathar village on its rock spur, with the natural bridges below. Best in the morning light." },
+      { title: "Wine trail of La Livinière", desc: "Three nearby cellars within fifteen minutes. We'll call ahead for a tasting." },
+    ]
+  },
+  hot: {
+    note: "Keep to the cool of the morning and the shade after",
+    items: [
+      { title: "Early swim & lazy garden", desc: "The pool is yours — followed by a long lunch in the shade. Sometimes the best day is here." },
+      { title: "Lac de Jouarres", desc: "Ten minutes away. Swimming, a shaded shore and a café. Go before noon." },
+      { title: "Caves of the Minervois", desc: "Cool underground at the Gouffre de Cabrespine. A welcome escape from the heat." },
+    ]
+  },
+  cloudy: {
+    note: "Soft skies — ideal for villages and cellars",
+    items: [
+      { title: "Carcassonne, the cité", desc: "The walled medieval city, forty minutes by car. Atmospheric under a grey sky and far quieter." },
+      { title: "Olonzac market morning", desc: "If it's a Tuesday, the village market is steps away. Cheese, olives and the local growers." },
+      { title: "Abbaye de Caunes-Minervois", desc: "Red marble abbey and a pretty old quarter. A relaxed hour with a coffee after." },
+    ]
+  },
+  rain: {
+    note: "A day for cellars, cloisters and long lunches",
+    items: [
+      { title: "Indoor wine tasting", desc: "Domaine cellars in La Livinière welcome you in from the rain. We'll book you a slot." },
+      { title: "Narbonne & its covered hall", desc: "The Halles market and the palace, all under cover. Forty minutes by car." },
+      { title: "Stay in by the fire", desc: "Books, a board game and a pot of tea in the salon. No shame in a slow day." },
+    ]
+  },
+  cold: {
+    note: "Bundle up — clear, crisp and worth the air",
+    items: [
+      { title: "Carcassonne ramparts", desc: "Bracing walk along the medieval walls with the Pyrenees on the horizon." },
+      { title: "Minerve in winter light", desc: "The village at its most dramatic and empty. Warm up with a cassoulet after." },
+      { title: "Cellar visits & cassoulet", desc: "Reds to warm you, then the region's famous slow-cooked classic for lunch." },
+    ]
+  }
+};
+
+/* ============================================================
+   2.  LOCATION  (Olonzac) — only change if you move the board
+   ============================================================ */
+const LAT = 43.279, LON = 2.734;
+
+/* ============================================================
+   3.  Logic — no need to edit below
+   ============================================================ */
+const WMO = {
+  0:["Clear sky","☀️"],1:["Mainly clear","🌤️"],2:["Partly cloudy","⛅"],3:["Overcast","☁️"],
+  45:["Fog","🌫️"],48:["Fog","🌫️"],51:["Light drizzle","🌦️"],53:["Drizzle","🌦️"],55:["Drizzle","🌦️"],
+  61:["Light rain","🌧️"],63:["Rain","🌧️"],65:["Heavy rain","🌧️"],66:["Freezing rain","🌧️"],67:["Freezing rain","🌧️"],
+  71:["Light snow","🌨️"],73:["Snow","🌨️"],75:["Heavy snow","❄️"],77:["Snow grains","🌨️"],
+  80:["Showers","🌦️"],81:["Showers","🌧️"],82:["Heavy showers","⛈️"],85:["Snow showers","🌨️"],86:["Snow showers","🌨️"],
+  95:["Thunderstorm","⛈️"],96:["Thunderstorm","⛈️"],99:["Thunderstorm","⛈️"]
+};
+
+function chooseMood(code, high, rainPct){
+  if (rainPct >= 45 || (code >= 51 && code <= 99)) return "rain";
+  if (high >= 32) return "hot";
+  if (high <= 12) return "cold";
+  if (code >= 2) return "cloudy";
+  return "sunny";
+}
+
+function renderTours(mood){
+  const set = TOURS[mood] || TOURS.cloudy;
+  document.getElementById("tSub").textContent = set.note;
+  const list = document.getElementById("tourList");
+  list.innerHTML = "";
+  set.items.forEach((t,i)=>{
+    const el = document.createElement("div");
+    el.className = "tour";
+    el.innerHTML = `<div class="num">${String(i+1).padStart(2,"0")}</div>
+      <div class="body"><div class="t-title">${t.title}</div>
+      <div class="t-desc">${t.desc}</div></div>`;
+    list.appendChild(el);
+  });
+}
+
+function setDateClock(){
+  const now = new Date();
+  document.getElementById("dayName").textContent =
+    now.toLocaleDateString("en-GB",{weekday:"long"});
+  document.getElementById("dateFull").textContent =
+    now.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+  document.getElementById("clock").textContent =
+    now.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+}
+
+async function loadWeather(){
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}`
+    + `&current=temperature_2m,weather_code`
+    + `&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code`
+    + `&timezone=Europe%2FParis&forecast_days=1`;
+  try{
+    const r = await fetch(url);
+    const d = await r.json();
+    const temp = Math.round(d.current.temperature_2m);
+    const code = d.current.weather_code;
+    const high = Math.round(d.daily.temperature_2m_max[0]);
+    const low  = Math.round(d.daily.temperature_2m_min[0]);
+    const rain = d.daily.precipitation_probability_max[0] ?? 0;
+    const [label, icon] = WMO[code] || ["—","🌡️"];
+
+    document.getElementById("wTemp").textContent = temp;
+    document.getElementById("wIcon").textContent = icon;
+    document.getElementById("wCond").textContent = label;
+    document.getElementById("wHigh").textContent = high + "°";
+    document.getElementById("wLow").textContent  = low + "°";
+    document.getElementById("wRain").textContent = rain + "%";
+
+    renderTours(chooseMood(code, high, rain));
+  }catch(e){
+    document.getElementById("wCond").innerHTML =
+      '<span class="err">Weather offline — check the network</span>';
+    renderTours("cloudy");
+  }
+}
+
+setDateClock();
+loadWeather();
+setInterval(setDateClock, 30*1000);          // clock every 30s
+setInterval(loadWeather, 30*60*1000);        // weather every 30 min
+</script>
+</body>
+</html>
