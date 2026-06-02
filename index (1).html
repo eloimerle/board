@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eloi Merle Today</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sage-deep:#3f5343; --sage:#6b8268; --sage-soft:#93a890; --sage-pale:#c5d2c0;
+    --cream:#f4f1e8; --cream-warm:#ece6d6; --ink:#2c352b; --gold:#b9985a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;width:100%;overflow:hidden;}
+  html{background:#3a4d3e;}
+  body{
+    background:
+      radial-gradient(ellipse at 20% 0%, #45594a 0%, transparent 55%),
+      radial-gradient(ellipse at 100% 100%, #364738 0%, transparent 50%),
+      linear-gradient(155deg, #3f5343 0%, #354736 100%);
+    color:var(--cream);font-family:'Jost',sans-serif;
+    display:flex;flex-direction:column;padding:3.2vh 3.6vw;position:relative;
+    /* slightly oversized + offset so pixel-shift drift never exposes an edge */
+    min-height:calc(100% + 20px);width:calc(100% + 20px);
+    margin:-10px 0 0 -10px;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;opacity:.04;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid rgba(197,210,192,.25);padding-bottom:1.6vh;flex-shrink:0;}
+  .brand{display:flex;flex-direction:column;align-items:flex-start;}
+  .logo{
+    height:24.3vh;width:auto;display:block;
+    filter:drop-shadow(0 4px 12px rgba(0,0,0,.25));
+  }
+  .brand .sub{font-size:.72vw;letter-spacing:.5em;text-transform:uppercase;color:var(--sage-pale);margin-top:1.2vh;font-weight:300;align-self:center;}
+  .datebox{text-align:right;}
+  .datebox .day{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.9vw;color:var(--gold);line-height:1;}
+  .datebox .date{font-size:1.2vw;letter-spacing:.22em;text-transform:uppercase;color:var(--sage-pale);margin-top:.6vh;font-weight:300;}
+  main{flex:1;display:grid;grid-template-columns:1fr 1.35fr;gap:3.5vw;align-items:start;padding-top:3vh;}
+  .weather{display:flex;flex-direction:column;align-items:center;text-align:center;align-self:center;}
+  .w-icon{font-size:9vw;line-height:1;filter:drop-shadow(0 6px 14px rgba(0,0,0,.3));}
+  .w-temp{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:8.5vw;line-height:.9;margin-top:1vh;}
+  .w-temp .deg{font-size:3.5vw;vertical-align:super;color:var(--sage-pale);}
+  .w-cond{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:2.4vw;color:var(--cream-warm);margin-top:.5vh;}
+  .w-meta{display:flex;gap:2.4vw;margin-top:2.2vh;font-size:1.15vw;letter-spacing:.12em;color:var(--sage-pale);font-weight:300;}
+  .w-meta b{display:block;color:var(--cream);font-weight:400;font-size:1.5vw;letter-spacing:0;margin-top:.4vh;}
+  .tomorrow{
+    display:flex;align-items:center;gap:1vw;margin-top:3vh;padding-top:2vh;
+    border-top:1px solid rgba(197,210,192,.18);
+  }
+  .tm-label{font-size:.95vw;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-weight:300;}
+  .tm-icon{font-size:2.4vw;line-height:1;}
+  .tm-cond{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.5vw;color:var(--sage-pale);}
+  .tm-temp{font-family:'Cormorant Garamond',serif;font-size:1.7vw;color:var(--cream);margin-left:auto;}
+  .tours-head{font-size:1.1vw;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);font-weight:400;margin-bottom:.4vh;}
+  .tours-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.7vw;color:var(--sage-pale);margin-bottom:2.4vh;}
+  .tour{display:flex;gap:1.6vw;align-items:baseline;padding:1.9vh 0;border-top:1px solid rgba(197,210,192,.18);opacity:0;transform:translateY(12px);animation:rise .7s ease forwards;}
+  .tour:last-child{border-bottom:1px solid rgba(197,210,192,.18);}
+  .tour:nth-child(2){animation-delay:.15s;}
+  .tour:nth-child(3){animation-delay:.3s;}
+  .tour:nth-child(4){animation-delay:.45s;}
+  @keyframes rise{to{opacity:1;transform:translateY(0);}}
+  .tour .num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:2.2vw;color:var(--gold);min-width:2vw;}
+  .tour .body .t-title{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:2.4vw;line-height:1.05;color:var(--cream);}
+  .tour .body .t-desc{font-size:1.25vw;font-weight:300;line-height:1.4;color:var(--sage-pale);margin-top:.6vh;max-width:34vw;}
+  footer{flex-shrink:0;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(197,210,192,.25);padding-top:1.4vh;margin-top:1vh;font-size:.95vw;letter-spacing:.18em;text-transform:uppercase;color:var(--sage-soft);font-weight:300;}
+  footer .clock{color:var(--cream);letter-spacing:.1em;}
+  .err{color:#e8c39a;font-style:italic;font-family:'Cormorant Garamond',serif;}
+</style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <img class="logo" src="eloi_merle_logo.png" alt="Eloi Merle">
+      <div class="sub">Minervois &middot; Olonzac</div>
+    </div>
+    <div class="datebox">
+      <div class="day" id="dayName">—</div>
+      <div class="date" id="dateFull">—</div>
+    </div>
+  </header>
+  <main>
+    <section class="weather">
+      <div class="w-icon" id="wIcon">·</div>
+      <div class="w-temp"><span id="wTemp">—</span><span class="deg">°</span></div>
+      <div class="w-cond" id="wCond">Loading…</div>
+      <div class="w-meta">
+        <div>High<b id="wHigh">—°</b></div>
+        <div>Low<b id="wLow">—°</b></div>
+        <div>Rain<b id="wRain">—%</b></div>
+      </div>
+      <div class="tomorrow">
+        <span class="tm-label">Tomorrow</span>
+        <span class="tm-icon" id="tmIcon">·</span>
+        <span class="tm-cond" id="tmCond">—</span>
+        <span class="tm-temp" id="tmTemp">—°</span>
+      </div>
+    </section>
+    <section class="tours">
+      <div class="tours-head">Suggested for today</div>
+      <div class="tours-sub" id="tSub"></div>
+      <div id="tourList"></div>
+    </section>
+  </main>
+  <footer>
+    <div>Ask us &mdash; we love planning your day</div>
+    <div class="clock" id="clock">—</div>
+  </footer>
+
+<script>
+/* ============================================================
+   YOUR TOURS  —  EDIT THIS LIST
+   ------------------------------------------------------------
+   title    – name shown in large type
+   desc     – a sentence or two underneath
+   weather  – conditions it suits: "sunny","hot","cloudy","rain","cold"
+   days     – 0=Sun 1=Mon 2=Tue 3=Wed 4=Thu 5=Fri 6=Sat, or ["any"]
+
+   Board shows up to 3 tours matching BOTH today's weather AND day,
+   topped up with any-day tours that fit the weather.
+   ============================================================ */
+const TOURS = [
+  {
+    title: "Olonzac market morning",
+    desc: "Our wonderful Tuesday market fills the village with cheeses, olives, and the local growers. It's all just steps from the door.",
+    weather: ["sunny","hot","cloudy"],
+    days: [2]
+  },
+  {
+    title: "Lagrasse village & abbey",
+    desc: "One of the Plus Beaux Villages de France, with cobbled lanes and an 8th-century abbey across a medieval bridge. Saturday brings its lively market.",
+    weather: ["sunny","hot","cloudy"],
+    days: ["any"]
+  },
+  {
+    title: "Minerve & the gorges",
+    desc: "A cathar village perched above deep canyons, famous for its natural rock bridges. A nine-kilometre loop explores the gorges below.",
+    weather: ["sunny","hot","cloudy"],
+    days: ["any"]
+  },
+  {
+    title: "The Canal du Midi by bike",
+    desc: "Homps is a short ride away, where you can join the shaded towpath beneath the plane trees and cycle either direction. Restaurants in the villages and at some of the locks make for an easy lunch along the way.",
+    weather: ["sunny","cloudy"],
+    days: ["any"]
+  },
+  {
+    title: "Wine trail of La Livinière",
+    desc: "",
+    dynamic: "winetrail",
+    weather: ["sunny","cloudy","rain"],
+    days: ["any"]
+  },
+  {
+    title: "Carcassonne, the cité",
+    desc: "",
+    dynamic: "carcassonne",
+    weather: ["sunny","hot","cloudy","rain","cold"],
+    days: ["any"]
+  },
+  {
+    title: "Lac de Jouarres",
+    desc: "A natural lake two kilometres away with a pine-shaded beach for swimming and kayaking. The lakeside guinguette is lovely for lunch, or a cold beer and an ice cream on a hot afternoon.",
+    weather: ["hot","sunny"],
+    days: ["any"]
+  },
+  {
+    title: "Oysters at the Étang de Thau",
+    desc: "Freshly harvested Bouzigues oysters on a terrace over the lagoon, with a glass of crisp Picpoul de Pinet. A perfect warm-day outing.",
+    weather: ["hot","sunny"],
+    days: ["any"]
+  },
+  {
+    title: "A beach club day",
+    desc: "",
+    dynamic: "beach",
+    minTempCloudy: 25,
+    weather: ["hot","sunny","cloudy"],
+    days: ["any"]
+  },
+  {
+    title: "L'Oulibo olive odyssey",
+    desc: "The famous olive cooperative at Bize-Minervois. An immersive tour and tasting of oils and tapenades. Ask us for your residents' discount card.",
+    weather: ["cloudy","sunny"],
+    days: ["any"]
+  },
+  {
+    title: "Oysters at the Buvette de Cabezac",
+    desc: "A true locals' secret near Bize-Minervois. A humble spot serving the freshest oysters on Wednesday and Friday evenings. Don't be put off by the modest look; arrive by five to get a table.",
+    weather: ["hot","sunny","cloudy"],
+    days: [3,5]
+  },
+  {
+    title: "Abbaye de Fontfroide",
+    desc: "A rose-stone Cistercian masterpiece in a quiet Corbières valley, with a serene cloister, terraced rose gardens and a vaulted tasting cellar.",
+    weather: ["hot","cloudy","sunny","rain"],
+    days: ["any"]
+  },
+  {
+    title: "Crémant cellars of Limoux",
+    desc: "",
+    dynamic: "limoux",
+    weather: ["hot","sunny","cloudy","rain"],
+    days: ["any"]
+  },
+  {
+    title: "Caunes-Minervois & its marble",
+    desc: "Honey-coloured lanes, an 8th-century abbey, and the famous pink Caunes marble, prized for centuries and used in grand French palaces. La Table de Terroir makes a lovely spot for a relaxed, seasonal lunch on its shady terrace.",
+    weather: ["cloudy","sunny"],
+    days: ["any"]
+  },
+  {
+    title: "Narbonne",
+    desc: "Once the capital of Roman Gaul, Narbonne wears its history proudly, from the soaring Gothic cathedral and the archbishops' palace to the Roman road still visible in the main square. Wander the grand covered market hall, with the Mediterranean coast close by. A fine city in any weather.",
+    weather: ["sunny","cloudy","rain"],
+    days: ["any"]
+  },
+  {
+    title: "Aigne, the snail village",
+    desc: "One of the Minervois' hidden curiosities, a medieval village coiled like a snail's shell, its narrow lanes spiralling inward to the old church at the heart. Lose an hour or two wandering, then settle in for a leisurely lunch at Lo Cagarol, where the regional cooking is worth the journey alone.",
+    weather: ["cloudy","sunny"],
+    days: ["any"]
+  },
+  {
+    title: "A slow day by the pool",
+    desc: "Some days call for nothing more than this. Wander into the village for a slow, shady lunch at a local table, then drift back to the garden for an afternoon by the pool, a book in hand and a nap in the warm air. This is what the Minervois does best.",
+    weather: ["hot","sunny","cloudy"],
+    days: ["any"]
+  },
+  {
+    title: "Cassoulet weather",
+    desc: "When there's a cool edge to the day, nothing satisfies like cassoulet, the rich, slow-cooked cassole of white beans, duck and sausage. Le 1900 in Olonzac does a fine one within walking distance, or make a day of it at La Demeure du Cassoulet in Carcassonne, with a robust Minervois red alongside.",
+    weather: ["cloudy","cold"],
+    maxTemp: 25,
+    days: ["any"]
+  }
+];
+
+/* Intro line per weather mood */
+const MOOD_NOTE = {
+  sunny:  "A bright day for the open road and the vines",
+  hot:    "Keep to the cool of the morning and the shade after",
+  cloudy: "Soft skies, ideal for villages and cellars",
+  rain:   "A day for cellars, cloisters and long lunches",
+  cold:   "Crisp and clear. Bundle up, it's worth the air"
+};
+
+/* LOCATION (Olonzac) */
+const LAT = 43.279, LON = 2.734;
+
+/* ---- logic, no need to edit ---- */
+const WMO = {
+  0:["Clear sky","☀️"],1:["Mainly clear","🌤️"],2:["Partly cloudy","⛅"],3:["Overcast","☁️"],
+  45:["Fog","🌫️"],48:["Fog","🌫️"],51:["Light drizzle","🌦️"],53:["Drizzle","🌦️"],55:["Drizzle","🌦️"],
+  61:["Light rain","🌧️"],63:["Rain","🌧️"],65:["Heavy rain","🌧️"],66:["Freezing rain","🌧️"],67:["Freezing rain","🌧️"],
+  71:["Light snow","🌨️"],73:["Snow","🌨️"],75:["Heavy snow","❄️"],77:["Snow grains","🌨️"],
+  80:["Showers","🌦️"],81:["Showers","🌧️"],82:["Heavy showers","⛈️"],85:["Snow showers","🌨️"],86:["Snow showers","🌨️"],
+  95:["Thunderstorm","⛈️"],96:["Thunderstorm","⛈️"],99:["Thunderstorm","⛈️"]
+};
+function chooseMood(code, high, rainPct){
+  if (rainPct >= 60 || (code >= 51 && code <= 99)) return "rain";
+  if (high >= 32) return "hot";
+  if (high <= 12) return "cold";
+  if (code >= 2)  return "cloudy";
+  return "sunny";
+}
+// Day-of-year, used to rotate the recommendations so they change daily
+function dayOfYear(d){
+  const start = new Date(d.getFullYear(), 0, 0);
+  return Math.floor((d - start) / 86400000);
+}
+function matchTours(mood, dayNum, high){
+  const fitsWeather = t => t.weather.includes(mood);
+  // Temperature gates:
+  //  - minTempCloudy: on a cloudy day, only show if warm enough (e.g. beach day)
+  //  - maxTemp: only show if the day's high is below this (e.g. cassoulet)
+  const tempOK = t => {
+    if (mood === "cloudy" && typeof t.minTempCloudy === "number"){
+      if (typeof high !== "number" || high < t.minTempCloudy) return false;
+    }
+    if (typeof t.maxTemp === "number"){
+      if (typeof high !== "number" || high >= t.maxTemp) return false;
+    }
+    return true;
+  };
+  const eligible = t => fitsWeather(t) && tempOK(t);
+
+  // Day-specific tours that fit (e.g. Tuesday market) always take priority
+  let picks = TOURS.filter(t => eligible(t) && !t.days.includes("any") && t.days.includes(dayNum));
+
+  // Any-day pool that fits the weather — rotate the order each day so
+  // guests don't see the same three on consecutive same-weather days.
+  let pool = TOURS.filter(t => eligible(t) && t.days.includes("any"));
+  if (pool.length){
+    const offset = dayOfYear(new Date()) % pool.length;
+    pool = pool.slice(offset).concat(pool.slice(0, offset));  // rotate start point
+  }
+  for (const t of pool){ if (picks.length >= 3) break; if (!picks.includes(t)) picks.push(t); }
+
+  // Fallback if nothing matched at all
+  if (picks.length === 0){
+    let fb = TOURS.filter(t => t.weather.includes("cloudy"));
+    const offset = fb.length ? dayOfYear(new Date()) % fb.length : 0;
+    fb = fb.slice(offset).concat(fb.slice(0, offset));
+    picks = fb.slice(0,3);
+  }
+  return picks.slice(0,3);
+}
+// Builds the La Livinière description: Senche always first, then two of the
+// others rotating by day so guests see different estates across a stay.
+function wineTrailDesc(){
+  const others = ["Château Maris","Château Faiteau","Château de Gourgazaud","Château La Croix Martelle in nearby Siran"];
+  const start = dayOfYear(new Date()) % others.length;
+  const pick = [others[start], others[(start+1) % others.length]];
+  return `Domaine de la Senche, ${pick[0]} and ${pick[1]} lie within easy reach. Do call ahead to reserve your tasting, as most welcome visitors by appointment.`;
+}
+function carcassonneDesc(mood){
+  const base = "Europe's finest walled medieval town, a UNESCO site half an hour away.";
+  if (mood === "rain" || mood === "cloudy" || mood === "cold"){
+    return base + " Atmospheric under grey skies, and far quieter then, too.";
+  }
+  return base + " The honey-coloured ramparts glow in the sun, so go early to beat the midday crowds.";
+}
+function beachDesc(){
+  const spots = [
+    "L'Hospitalet at Narbonne-Plage",
+    "trendy Le Paparazzo at Gruissan",
+    "Les Voiles at Portiragnes"
+  ];
+  const start = dayOfYear(new Date()) % spots.length;
+  const pick = [spots[start], spots[(start+1) % spots.length]];
+  return `Lounge beds, cocktails and seafood by the sea. Try ${pick[0]} or ${pick[1]}. The Mediterranean is about an hour away.`;
+}
+function limouxDesc(){
+  const houses = ["Maison Guinot","Domaine J. Laurens"];
+  const i = dayOfYear(new Date()) % 2;
+  const order = i === 0 ? houses : [houses[1], houses[0]];
+  return `${order[0]} and ${order[1]}, makers of sparkling Crémant since 1875. A characterful cellar tour forty-five minutes south, and a refreshing escape into the cool on a warm day.`;
+}
+function tourDesc(t, mood){
+  if (t.dynamic === "winetrail") return wineTrailDesc();
+  if (t.dynamic === "carcassonne") return carcassonneDesc(mood);
+  if (t.dynamic === "beach") return beachDesc();
+  if (t.dynamic === "limoux") return limouxDesc();
+  return t.desc;
+}
+function renderTours(mood, dayNum, high){
+  document.getElementById("tSub").textContent = MOOD_NOTE[mood] || "";
+  const list = document.getElementById("tourList"); list.innerHTML = "";
+  matchTours(mood, dayNum, high).forEach((t,i)=>{
+    const el = document.createElement("div"); el.className = "tour";
+    el.innerHTML = `<div class="num">${String(i+1).padStart(2,"0")}</div>
+      <div class="body"><div class="t-title">${t.title}</div>
+      <div class="t-desc">${tourDesc(t, mood)}</div></div>`;
+    list.appendChild(el);
+  });
+}
+function setDateClock(){
+  const now = new Date();
+  document.getElementById("dayName").textContent = now.toLocaleDateString("en-GB",{weekday:"long"});
+  document.getElementById("dateFull").textContent = now.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+  document.getElementById("clock").textContent = now.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+}
+async function loadWeather(){
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}`
+    + `&current=temperature_2m,weather_code`
+    + `&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code`
+    + `&timezone=Europe%2FParis&forecast_days=2`;
+  const dayNum = new Date().getDay();
+  try{
+    const r = await fetch(url); const d = await r.json();
+    const temp = Math.round(d.current.temperature_2m);
+    const code = d.current.weather_code;
+    const high = Math.round(d.daily.temperature_2m_max[0]);
+    const low  = Math.round(d.daily.temperature_2m_min[0]);
+    const rain = d.daily.precipitation_probability_max[0] ?? 0;
+    const [label, icon] = WMO[code] || ["—","🌡️"];
+    document.getElementById("wTemp").textContent = temp;
+    document.getElementById("wIcon").textContent = icon;
+    document.getElementById("wCond").textContent = label;
+    document.getElementById("wHigh").textContent = high + "°";
+    document.getElementById("wLow").textContent  = low + "°";
+    document.getElementById("wRain").textContent = rain + "%";
+    renderTours(chooseMood(code, high, rain), dayNum, high);
+
+    // Tomorrow's glimpse (index 1 of the daily arrays)
+    if (d.daily.time.length > 1){
+      const tCode = d.daily.weather_code[1];
+      const tHigh = Math.round(d.daily.temperature_2m_max[1]);
+      const [tLabel, tIcon] = WMO[tCode] || ["—","🌡️"];
+      document.getElementById("tmIcon").textContent = tIcon;
+      document.getElementById("tmCond").textContent = tLabel;
+      document.getElementById("tmTemp").textContent = tHigh + "°";
+    }
+  }catch(e){
+    document.getElementById("wCond").innerHTML = '<span class="err">Weather offline, check the network</span>';
+    renderTours("cloudy", dayNum);
+  }
+}
+setDateClock(); loadWeather();
+setInterval(setDateClock, 30*1000);
+setInterval(loadWeather, 30*60*1000);
+
+/* ---- Daily rollover ----
+   Watches for the calendar day changing (e.g. at midnight) and refreshes
+   the date and tour recommendations, even if the page is never reloaded.
+   loadWeather() re-renders the tours with the new day, so we just trigger it. */
+(function(){
+  let lastDay = new Date().getDate();
+  setInterval(function(){
+    const today = new Date().getDate();
+    if (today !== lastDay){
+      lastDay = today;
+      setDateClock();    // update the displayed date immediately
+      loadWeather();     // re-fetch weather AND re-render tours for the new day
+    }
+  }, 60*1000);           // check once a minute
+})();
+
+/* ---- Burn-in protection: slow pixel drift ----
+   Nudges the whole page a few pixels on a slow cycle so no pixel
+   stays lit in exactly the same spot. Imperceptible to viewers. */
+(function(){
+  const RANGE = 8;          // max pixels of movement in any direction
+  const points = [          // a slow loop around a small box
+    [0,0],[RANGE,0],[RANGE,RANGE],[0,RANGE],
+    [-RANGE,RANGE],[-RANGE,0],[-RANGE,-RANGE],[0,-RANGE],[RANGE,-RANGE]
+  ];
+  let i = 0;
+  document.body.style.transition = "transform 6s ease-in-out";
+  function shift(){
+    const [x,y] = points[i % points.length];
+    document.body.style.transform = `translate(${x}px, ${y}px)`;
+    i++;
+  }
+  shift();
+  setInterval(shift, 60*1000);   // move once a minute
+})();
+</script>
+</body>
+</html>
